@@ -409,16 +409,23 @@
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
-        // ── Scroll-driven model spin ──────────────────────────────────────────
-        // Rotates the GLB model on its Y-axis as the user scrolls.
-        // Adjust rotationDeg to change spin speed (higher = faster).
+        // ── Smooth scroll-driven model spin ──────────────────────────────────
         const bgModel = document.getElementById('bg-model');
         const rotationDeg = 0.08;
+        let targetAngle = 0;
+        let currentAngle = 0;
+        const lerpSpeed = 0.06; // lower = smoother/slower catch-up
 
         window.addEventListener('scroll', () => {
-            const angle = window.scrollY * rotationDeg;
-            bgModel.setAttribute('orientation', `0deg ${angle}deg 0deg`);
+            targetAngle = window.scrollY * rotationDeg;
         }, { passive: true });
+
+        function animate() {
+            currentAngle += (targetAngle - currentAngle) * lerpSpeed;
+            bgModel.setAttribute('orientation', `0deg ${currentAngle}deg 0deg`);
+            requestAnimationFrame(animate);
+        }
+        animate();
         // ─────────────────────────────────────────────────────────────────────
 
         function handleSubmit(e) {
